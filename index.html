@@ -12,22 +12,65 @@
   <div class="top-panel"></div>
   <div class="content">
     <div class="tabs">
-      <div class="tab home active">home</div>
-      <div class="tab video hide">video</div>
+      <div class="tab home active">home
+        <button onclick="authenticate().then(loadClient)">authorize and load</button>
+        <button onclick="execute()">execute</button>
+      </div>
+      <div class="tab videos hide">videos</div>
       <div class="tab podcasts hide">podcasts</div>
       <div class="tab games hide">games</div>
     </div>
   </div>
   <div class="bottom-panel">
-      <nav class="menu">
-        <div class="menu__item"><img id="home" src="assets/homepage.svg" alt="" class="menu__item-img"></div>
-        <div class="menu__item"><img id="video" src="assets/video.svg" alt="" class="menu__item-img"></div>
-        <div class="menu__item"><img id="podcasts" src="assets/podcast.svg" alt="" class="menu__item-img"></div>
-        <div class="menu__item"><img id="games" src="assets/game.svg" alt="" class="menu__item-img"></div>
-      </nav>
-    </div>
+    <nav class="menu">
+      <div class="menu__item"><img id="home" src="assets/homepage.svg" alt="" class="menu__item-img"></div>
+      <div class="menu__item"><img id="videos" src="assets/video.svg" alt="" class="menu__item-img"></div>
+      <div class="menu__item"><img id="podcasts" src="assets/podcast.svg" alt="" class="menu__item-img"></div>
+      <div class="menu__item"><img id="games" src="assets/game.svg" alt="" class="menu__item-img"></div>
+    </nav>
+  </div>
   </div>
   <script src="js/index.js"></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script>
+    /**
+     * Sample JavaScript code for youtube.channels.list
+     * See instructions for running APIs Explorer code samples locally:
+     * https://developers.google.com/explorer-help/guides/code_samples#javascript
+     */
+
+    function authenticate() {
+      return gapi.auth2.getAuthInstance()
+        .signIn({ scope: "https://www.googleapis.com/auth/youtube.readonly" })
+        .then(function () { console.log("Sign-in successful"); },
+          function (err) { console.error("Error signing in", err); });
+    }
+    function loadClient() {
+      gapi.client.setApiKey("YOUR_API_KEY");
+      return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+        .then(function () { console.log("GAPI client loaded for API"); },
+          function (err) { console.error("Error loading GAPI client for API", err); });
+    }
+    // Make sure the client is loaded and sign-in is complete before calling this method.
+    function execute() {
+      return gapi.client.youtube.channels.list({
+        "part": [
+          "snippet,contentDetails,statistics"
+        ],
+        "id": [
+          "UC_x5XG1OV2P6uZZ5FSM9Ttw"
+        ]
+      })
+        .then(function (response) {
+          // Handle the results here (response.result has the parsed body).
+          console.log("Response", response);
+        },
+          function (err) { console.error("Execute error", err); });
+    }
+    gapi.load("client:auth2", function () {
+      gapi.auth2.init({ client_id: "YOUR_CLIENT_ID" });
+    });
+  </script>
 </body>
 
 </html>

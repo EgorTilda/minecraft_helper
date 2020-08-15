@@ -8,7 +8,7 @@ const hideTabs = () => {
 };
 
 tabsControl.forEach( (item) => {
-  item.addEventListener('click', (e) => {
+  item.addEventListener('touchstart', (e) => {
     if(e.target.tagName == 'IMG') {
      hideTabs();
      document.querySelector(`.${e.target.id}`).classList.remove('hide');
