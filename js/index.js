@@ -16,3 +16,4 @@ tabsControl.forEach( (item) => {
     }
   });
 });
+
